@@ -40,6 +40,13 @@ class FileManager(PolymorphicManager):
     def find_duplicates(self, file_obj):
         return [i for i in self.exclude(pk=file_obj.pk).filter(sha1=file_obj.sha1)]
 
+    def get_by_natural_key(self, *path):
+        from .virtualitems import FolderRoot
+        folder = FolderRoot()
+        for segment in path[:-1]:
+            folder = folder.children.get(name=segment)
+        return self.get(original_filename=path[-1], folder=folder)
+
 
 def is_public_default():
     # not using this setting directly as `is_public` default value
@@ -349,6 +356,11 @@ class File(PolymorphicModel, mixins.IconsMixin):
     @property
     def duplicates(self):
         return File.objects.find_duplicates(self)
+
+    def natural_key(self):
+        path = [f.name for f in self.logical_path]
+        path.append(self.original_filename)
+        return tuple(path)
 
     class Meta(object):
         app_label = 'filer'

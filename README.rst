@@ -1,7 +1,8 @@
-============
-django-filer
-============
+================
+django-filer-mod
+================
 
+This project is a fork of django-filer with some additional changes.
 
 A file management application for django that makes handling of files and images a breeze.
 
